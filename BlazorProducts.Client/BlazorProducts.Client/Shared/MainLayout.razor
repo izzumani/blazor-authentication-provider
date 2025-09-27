@@ -1,13 +1,27 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    <AuthorizeView>
+        <Authorized>
+            <div class="sidebar">
+                <NavMenu />
+            </div>
+        </Authorized>
+    </AuthorizeView>
 
     <div class="main">
         <div class="top-row px-4">
-            <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+            <AuthorizeView>
+                <Authorized>
+                    <span class="ml-md-auto">Welcome, @context.User.Identity?.Name!</span>
+                    <a href="/login" class="ml-3">Logout</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login" class="ml-md-auto">Login</a>
+                </NotAuthorized>
+            </AuthorizeView>
+            <a href="http://blazor.net" target="_blank" class="ml-3">About</a>
         </div>
 
         <div class="content px-4">

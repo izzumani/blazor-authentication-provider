@@ -1,17 +1,11 @@
 ﻿@page "/counter"
-@using System.Security.Claims
+@attribute [Authorize(Roles = "Administrator,User")]
+<PageTitle>Counter</PageTitle>
 
-<AuthorizeView Roles="Administrator">
-    <Authorized>
-        The user: @context.User.FindFirst(ClaimTypes.Name).Value is authorized
-    </Authorized>
-    <NotAuthorized>
-        The User is not authorized
-    </NotAuthorized>
-</AuthorizeView>
+<h3>Counter</h3>
 
+<p>Current count: @currentCount</p>
 <CounterPrint CurrentCount="currentCount" Title="Counter" />
-
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
 @code {
@@ -24,8 +18,8 @@
     {
         var authState = await AuthState;
         var user = authState.User;
-
-        if (user.Identity.IsAuthenticated)
+        ;
+        if (user.IsInRole("Administrator"))
             currentCount++;
         else
             currentCount--;

@@ -1,0 +1,129 @@
+@page "/login"
+@using BlazorProducts.Client.AuthProviders
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@attribute [AllowAnonymous]
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h3>Login Page</h3>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Login Simulation</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <p>This is a test login page.</p>
+                    <p>Return URL: @(string.IsNullOrEmpty(ReturnUrl) ? "None" : ReturnUrl)</p>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" @onclick="SimulateLoginAsUser">Login as User</button>
+                    <button class="btn btn-warning" @onclick="SimulateLoginAsAdmin">Login as Admin</button>
+                    <button class="btn btn-danger" @onclick="Logout">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Authentication Test Control</h5>
+            </div>
+            <div class="card-body">
+                <h6>Quick Auth State Changes</h6>
+                <div class="btn-group mb-3" role="group">
+                    <button class="btn btn-sm btn-outline-danger" @onclick="SetAnonymous">Anonymous</button>
+                    <button class="btn btn-sm btn-outline-success" @onclick="SetAuthenticatedUser">User</button>
+                    <button class="btn btn-sm btn-outline-warning" @onclick="SetAuthenticatedAdmin">Admin</button>
+                </div>
+
+                <hr />
+
+                <h6>Test Navigation</h6>
+                <p>Try navigating to these pages after setting different auth states:</p>
+                <ul>
+                    <li><a href="/counter">Counter Page (Requires Admin)</a></li>
+                    <li><a href="/products">Products Page (Requires Authentication)</a></li>
+                </ul>
+
+                <hr />
+
+                <h6>Current Authentication State</h6>
+                <AuthorizeView>
+                    <Authorized>
+                        <p class="text-success mb-1">
+                            <strong>Status:</strong> Authenticated
+                        </p>
+                        <p class="mb-1">
+                            <strong>User:</strong> @context.User.Identity?.Name
+                        </p>
+                        <p class="mb-1">
+                            <strong>Roles:</strong> @string.Join(", ", context.User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value))
+                        </p>
+                    </Authorized>
+                    <NotAuthorized>
+                        <p class="text-danger">
+                            <strong>Status:</strong> Not Authenticated
+                        </p>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    private TestAuthStateProvider GetTestProvider()
+    {
+        return (TestAuthStateProvider)AuthStateProvider;
+    }
+
+    private void SimulateLoginAsUser()
+    {
+        GetTestProvider().Login("User");
+        NavigateToReturnUrl();
+    }
+
+    private void SimulateLoginAsAdmin()
+    {
+        GetTestProvider().Login("Administrator");
+        NavigateToReturnUrl();
+    }
+
+    private void Logout()
+    {
+        GetTestProvider().Logout();
+    }
+
+    private void SetAnonymous()
+    {
+        GetTestProvider().Logout();
+    }
+
+    private void SetAuthenticatedUser()
+    {
+        GetTestProvider().Login("User");
+    }
+
+    private void SetAuthenticatedAdmin()
+    {
+        GetTestProvider().Login("Administrator");
+    }
+
+    private void NavigateToReturnUrl()
+    {
+        if (!string.IsNullOrEmpty(ReturnUrl))
+        {
+            Navigation.NavigateTo(ReturnUrl);
+        }
+    }
+}
