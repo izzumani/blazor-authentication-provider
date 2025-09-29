@@ -1,5 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
+@using BlazorProducts.Client.AuthProviders
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
 
 <div class="page">
     <AuthorizeView>
@@ -15,7 +18,7 @@
             <AuthorizeView>
                 <Authorized>
                     <span class="ml-md-auto">Welcome, @context.User.Identity?.Name!</span>
-                    <a href="/login" class="ml-3">Logout</a>
+                    <a href="#" @onclick="Logout" @onclick:preventDefault="true" class="ml-3">Logout</a>
                 </Authorized>
                 <NotAuthorized>
                     <a href="/login" class="ml-md-auto">Login</a>
@@ -34,4 +37,11 @@
 
 @code {
     private readonly string _color = "#0505b5";
+
+    private void Logout()
+    {
+        var testProvider = (TestAuthStateProvider)AuthStateProvider;
+        testProvider.Logout();
+        Navigation.NavigateTo("/login");
+    }
 }
