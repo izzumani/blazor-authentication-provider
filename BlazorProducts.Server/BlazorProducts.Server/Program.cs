@@ -1,17 +1,11 @@
 using BlazorProducts.Server.Context;
 using BlazorProducts.Server.MigrationManager;
 using BlazorProducts.Server.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container
-builder.Services.AddControllers();
-
-// Add API documentation
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 // Configure CORS
 builder.Services.AddCors(policy =>
@@ -29,6 +23,16 @@ builder.Services.AddDbContext<ProductContext>(opt =>
 
 // Register repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ProductContext>();
+
+// Add services to the container
+builder.Services.AddControllers();
+
+// Add API documentation
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
