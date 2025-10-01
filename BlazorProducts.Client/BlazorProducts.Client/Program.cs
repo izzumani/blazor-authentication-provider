@@ -14,5 +14,9 @@ builder.Services.AddScoped<IProductHttpRepository, ProductHttpRepository>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
+builder.Services.AddOidcAuthentication(options =>
+{
+    builder.Configuration.Bind("oidc", options.ProviderOptions);
+});
 
 await builder.Build().RunAsync();
