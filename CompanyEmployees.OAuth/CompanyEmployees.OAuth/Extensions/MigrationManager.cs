@@ -1,6 +1,6 @@
 ﻿using CompanyEmployees.OAuth.Configuration;
-using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
+using IdentityServer8.EntityFramework.DbContexts;
+using IdentityServer8.EntityFramework.Mappers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
